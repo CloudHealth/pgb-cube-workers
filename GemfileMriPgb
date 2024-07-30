@@ -1,14 +1,15 @@
 # deployment group override variables shared between cp_workers and pgb_cube_workers
 enable_pgb_group_override = (ENV['PGB_GROUP_OVERRIDE'] || '') != ''
+use_cht_src = (ENV['USE_CHT_SRC'] || '') != ''
 
-eval_gemfile File.expand_path('../core/Gemfile', __FILE__)
+# re-use the Gemfile from cp-workers
+eval_gemfile File.expand_path('../core/GemfileMri', __FILE__)
 
-if enable_pgb_group_override
+# make specific required overrides
+if enable_pgb_group_override && !use_cht_src
     # override from base file. Complementary change in required in the core module.
     gem 'cht_billing',      :git => 'git@github.com:CloudHealth/cht_billing.git', :branch => 'tgadde/ENG-53223'
 end
 
-
-## #TODO: verify alternate options and lock on one
-## #this is explicit and more readable but do we use a bundler version that support this.
+## #this is explicit and more readable but the current used bundler version doesn't support this.
 ## override_gem 'cht_billing', '2.0.0'
